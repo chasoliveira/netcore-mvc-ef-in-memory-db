@@ -1,6 +1,6 @@
 using System;
 
-namespace WebApplicationEF
+namespace WebApplicationEF.Models
 {
   public class WeatherForecast
   {

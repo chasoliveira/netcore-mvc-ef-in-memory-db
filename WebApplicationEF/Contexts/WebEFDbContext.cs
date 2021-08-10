@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplicationEF.Models;
 
-namespace WebApplicationEF
+namespace WebApplicationEF.Contexts
 {
   public class WebEFDbContext : DbContext
   {
@@ -20,9 +21,9 @@ namespace WebApplicationEF
       modelBuilder.Entity<WeatherForecast>().HasKey(p => p.WetherKey);
     }
 
-    public List<String> ToListChanges()
+    public List<string> ToListChanges()
     {
-      return this.ChangeTracker.Entries().Where(e => e.State == EntityState.Modified).Select(e => e.State.ToString()).ToList();
+      return ChangeTracker.Entries().Where(e => e.State == EntityState.Modified).Select(e => e.State.ToString()).ToList();
     }
 
     public List<WeatherForecast> ListWF()

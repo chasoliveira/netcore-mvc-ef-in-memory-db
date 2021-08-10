@@ -1,21 +1,13 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
+using WebApplicationEF.Contexts;
+using WebApplicationEF.Middlewares;
 
 namespace WebApplicationEF
 {
@@ -53,17 +45,18 @@ namespace WebApplicationEF
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApplicationEF v1"));
       }
 
-      app.Use((httpContext, t) =>
+      //  Adds a middleware delegate defined in-line to the application's request pipeline.
+      app.Use((httpContext, next) =>
       {
-        if (httpContext.Request.Path.StartsWithSegments("/use-health"))
+        if (httpContext.Request.Path.StartsWithSegments("/diagnostics"))
         {
           httpContext.Response.StatusCode = 200;
-          return httpContext.Response.WriteAsync("OK");
+          return httpContext.Response.WriteAsync("{\"message\": \"Ok\"}");
         }
-        return t();
+        return next();
       });
 
-      app.UseMiddleware<MyMiddleware>();
+      app.UseMiddleware<HealthMiddleware>();
 
       app.UseRouting();
 
@@ -75,24 +68,5 @@ namespace WebApplicationEF
         endpoints.MapControllers();
       });
     }
-  }
-
-  public class MyMiddleware
-  {
-    private RequestDelegate Next { get; }
-    public MyMiddleware(RequestDelegate nextMiddleware)
-    {
-      Next = nextMiddleware;
-    }
-    public async Task Invoke(HttpContext httpContext)
-    {
-      if (httpContext.Request.Path.StartsWithSegments("/health"))
-      {
-        httpContext.Response.StatusCode = 200;
-        await httpContext.Response.WriteAsync("OK");
-      }
-      await Next(httpContext);
-    }
-
   }
 }

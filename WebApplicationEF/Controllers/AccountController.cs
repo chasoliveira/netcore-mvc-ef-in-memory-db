@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationEF.Contexts;
+using WebApplicationEF.Models;
+using WebApplicationEF.ViewModels;
 
 namespace WebApplicationEF.Controllers
 {
@@ -16,7 +19,7 @@ namespace WebApplicationEF.Controllers
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] UserModel user)
+    public IActionResult Post([FromBody] UserViewModel user)
     {
       var userCreated = dbContext.Users.Add(new User { UserName = user.UserName, Password = user.Password });
       dbContext.SaveChanges();

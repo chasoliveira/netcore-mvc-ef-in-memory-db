@@ -1,4 +1,4 @@
-﻿namespace WebApplicationEF
+﻿namespace WebApplicationEF.Models
 {
   public class User
   {
